@@ -1,12 +1,19 @@
-import express from "express";
-import userRoutes from "./router/users";
+import { createApp } from "./createApp";
+import * as dotenv from "dotenv";
+import * as mongoose from "mongoose";
 
-const app = express();
+dotenv.config();
 
-app.use("/api/users", userRoutes);
+const app = createApp();
 
-const PORT = 3000;
+const { PORT, DB_HOST } = process.env;
 
-app.listen(PORT, () => {
-  console.log(`Running on port: ${PORT}`);
-});
+mongoose
+  .connect(DB_HOST as string)
+  .then(() => {
+    app.listen(PORT || 3001);
+  })
+  .catch((err) => {
+    console.error("Error connecting to the database:", err);
+    process.exit(1);
+  });
