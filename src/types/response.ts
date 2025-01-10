@@ -1,7 +1,8 @@
 export interface User {
-  id: string;
+  _id: string;
   email: string;
   username: string;
+  [x: string]: any;
 }
 
 export interface ToDo {
