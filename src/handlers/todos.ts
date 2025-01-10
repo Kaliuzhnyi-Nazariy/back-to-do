@@ -9,6 +9,16 @@ async function getToDos(req: Request, res: Response<ToDo[]>) {
 
   if (!todos) throw Error("something went wrong");
 
+  console.log(req.session);
+  console.log(req.session.id);
+  req.sessionStore.get(req.session.id, (err, sessionData) => {
+    if (err) {
+      console.log(err);
+      throw err;
+    }
+    console.log(sessionData);
+  });
+
   res.status(200).json(todos);
   // res.send([
   //   {

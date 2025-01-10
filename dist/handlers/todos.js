@@ -16,9 +16,18 @@ const todo_1 = __importDefault(require("../schemas/todo"));
 const helpers_1 = __importDefault(require("../helpers"));
 function getToDos(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const todos = yield todo_1.default.find({ ownerId: "123" });
+        const todos = yield todo_1.default.find({ ownerId: "64b9f1d2a5a6b5e5d5c3f4e7" });
         if (!todos)
             throw Error("something went wrong");
+        console.log(req.session);
+        console.log(req.session.id);
+        req.sessionStore.get(req.session.id, (err, sessionData) => {
+            if (err) {
+                console.log(err);
+                throw err;
+            }
+            console.log(sessionData);
+        });
         res.status(200).json(todos);
         // res.send([
         //   {
@@ -38,16 +47,17 @@ function createToDo(req, res) {
             title,
             description,
             status,
-            ownerId: "123",
+            ownerId: "64b9f1d2a5a6b5e5d5c3f4e7",
         });
+        console.log(newToDo);
         res.status(201).json(newToDo);
     });
 }
 function updateToDo(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        // const { id: _id } = req.params;
-        const { _id, title, description, status } = req.body;
-        const isToDo = yield todo_1.default.findById({ id: _id });
+        const { id: _id } = req.params;
+        const { title, description, status } = req.body;
+        const isToDo = yield todo_1.default.findById(_id);
         if (!isToDo) {
             throw new Error("Not found");
         }
@@ -60,8 +70,8 @@ function updateToDo(req, res) {
 }
 function deleteToDo(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { _id } = req.body;
-        const isToDo = yield todo_1.default.findById({ id: _id });
+        const { id: _id } = req.params;
+        const isToDo = yield todo_1.default.findById(_id);
         if (!isToDo) {
             throw new Error("Not found");
         }
@@ -73,8 +83,8 @@ function deleteToDo(req, res) {
     });
 }
 exports.default = {
-    getToDos: (0, helpers_1.default)(getToDos),
-    createToDo: (0, helpers_1.default)(createToDo),
-    updateToDo: (0, helpers_1.default)(updateToDo),
-    deleteToDo: (0, helpers_1.default)(deleteToDo),
+    getToDos: helpers_1.default.ctrlWrapper(getToDos),
+    createToDo: helpers_1.default.ctrlWrapper(createToDo),
+    updateToDo: helpers_1.default.ctrlWrapper(updateToDo),
+    deleteToDo: helpers_1.default.ctrlWrapper(deleteToDo),
 };
