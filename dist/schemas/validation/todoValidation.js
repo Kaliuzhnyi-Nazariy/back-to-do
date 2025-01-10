@@ -35,12 +35,11 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const yup = __importStar(require("yup"));
 const todoValidation = yup.object({
-    _id: yup.string().required(),
     title: yup
         .string()
         .min(2, "Title should be more than 2 caracters!")
         .required(),
-    descriptiom: yup
+    description: yup
         .string()
         .max(256, "Description can't be more than 256 caracters!")
         .required(),
