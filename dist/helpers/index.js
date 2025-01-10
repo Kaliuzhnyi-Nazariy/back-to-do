@@ -4,4 +4,5 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ctrlWrapper_1 = __importDefault(require("./ctrlWrapper"));
-exports.default = ctrlWrapper_1.default;
+const handleMongooseError_1 = __importDefault(require("./handleMongooseError"));
+exports.default = { ctrlWrapper: ctrlWrapper_1.default, handleMongooseError: handleMongooseError_1.default };
