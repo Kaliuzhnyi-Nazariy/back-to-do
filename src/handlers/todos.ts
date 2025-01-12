@@ -5,18 +5,18 @@ import { IToDo, ToDoCreate } from "../schemas/types/todo.schema";
 import helper from "../helpers";
 
 async function getToDos(req: Request, res: Response<ToDo[]>) {
-  const todos = await ToDoSchema.find({ ownerId: "64b9f1d2a5a6b5e5d5c3f4e7" });
+  const todos = await ToDoSchema.find({ ownerId: req.user?._id });
 
   if (!todos) throw Error("something went wrong");
 
-  console.log(req.session);
-  console.log(req.session.id);
+  // console.log(req.session);
+  // console.log(req.session.id);
   req.sessionStore.get(req.session.id, (err, sessionData) => {
     if (err) {
-      console.log(err);
+      // console.log(err);
       throw err;
     }
-    console.log(sessionData);
+    console.log("sessionData: ", sessionData);
   });
 
   res.status(200).json(todos);
@@ -35,15 +35,15 @@ async function createToDo(
   res: Response<ToDo>
 ) {
   const { title, description, status } = req.body;
-  console.log(title, description, status);
+  // console.log(title, description, status);
   const newToDo = await ToDoSchema.create({
     title,
     description,
     status,
-    ownerId: "64b9f1d2a5a6b5e5d5c3f4e7",
+    ownerId: req.user?._id,
   });
 
-  console.log(newToDo);
+  // console.log(newToDo);
 
   res.status(201).json(newToDo);
 }
