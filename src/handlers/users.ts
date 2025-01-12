@@ -8,9 +8,9 @@ import { errorHandler } from "../helpers/ErrorHandler";
 import { IUser, UserSchema } from "../schemas/types/user.schema";
 import ctrlWrapper from "../helpers/ctrlWrapper";
 
-function getUser(req: Request, res: Response) {
-  res.send([]);
-}
+// function getUser(req: Request, res: Response) {
+//   res.send([]);
+// }
 
 async function createUser(
   req: Request<{}, {}, CreateUserDto>,
@@ -64,7 +64,7 @@ async function loginUser(
   let user: UserSchema | null = null;
 
   if (email) {
-    console.log(email);
+    // console.log(email);
     user = await User.findOne({ email }, "-__v");
   } else if (username) {
     user = await User.findOne({ username }, "-__v");
@@ -114,7 +114,14 @@ async function updateUser(
   });
 }
 
-async function logoutUser() {}
+async function logoutUser(req: Request, res: Response) {
+  if (!req.user) throw errorHandler(401);
+
+  req.logout((err) => {
+    if (err) throw errorHandler(400);
+    res.status(204).json();
+  });
+}
 
 async function deleteUser(
   req: Request<{ id: string }>,
