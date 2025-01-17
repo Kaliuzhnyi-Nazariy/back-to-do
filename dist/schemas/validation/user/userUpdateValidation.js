@@ -2,9 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const yup_1 = require("yup");
 const userUpdateValidation = (0, yup_1.object)({
-    email: (0, yup_1.string)()
-        .email("Please enter valid email value!")
-        .required("This field can not be empty!"),
     username: (0, yup_1.string)()
         .min(2, "Username should be longer than 2 characters!")
         .max(12, "Username can't be longer than 12 characters!")

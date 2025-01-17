@@ -1,9 +1,6 @@
 import { object, string } from "yup";
 
 const userUpdateValidation = object({
-  email: string()
-    .email("Please enter valid email value!")
-    .required("This field can not be empty!"),
   username: string()
     .min(2, "Username should be longer than 2 characters!")
     .max(12, "Username can't be longer than 12 characters!")
