@@ -5,9 +5,10 @@ import { errorHandler } from "../helpers/ErrorHandler";
 import bcrypt from "bcrypt";
 
 interface IUser {
-  _id: string;
-  username: string;
-  email: string;
+  _id?: string;
+  username?: string;
+  email?: string;
+  [x: string]: any;
 }
 
 declare global {
@@ -34,15 +35,15 @@ passport.deserializeUser(async (id, done) => {
 
 export default passport.use(
   new Strategy(async (username, password, done) => {
-    // console.log("username: ", username);
-    // console.log("password: ", password);
+    console.log("username: ", username);
+    console.log("password: ", password);
     try {
       const findUser = await User.findOne({ username });
-      if (!findUser) throw errorHandler(400);
+      if (!findUser) throw errorHandler(404, "Jakogo hira");
 
       const comparePassword = await bcrypt.compare(password, findUser.password);
 
-      if (!comparePassword) throw errorHandler(400);
+      if (!comparePassword) throw errorHandler(400, "password ");
       done(null, findUser);
     } catch (error) {
       done(error, false);

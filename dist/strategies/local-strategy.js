@@ -18,9 +18,9 @@ const user_1 = __importDefault(require("../schemas/user"));
 const ErrorHandler_1 = require("../helpers/ErrorHandler");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 passport_1.default.serializeUser((user, done) => {
-    console.log("user: ");
-    console.log(user);
-    done(null, user);
+    // console.log("user: ");
+    // console.log(user);
+    done(null, user._id);
 });
 passport_1.default.deserializeUser((id, done) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -39,10 +39,10 @@ exports.default = passport_1.default.use(new passport_local_1.Strategy((username
     try {
         const findUser = yield user_1.default.findOne({ username });
         if (!findUser)
-            throw (0, ErrorHandler_1.errorHandler)(400);
+            throw (0, ErrorHandler_1.errorHandler)(404, "Jakogo hira");
         const comparePassword = yield bcrypt_1.default.compare(password, findUser.password);
         if (!comparePassword)
-            throw (0, ErrorHandler_1.errorHandler)(400);
+            throw (0, ErrorHandler_1.errorHandler)(400, "password ");
         done(null, findUser);
     }
     catch (error) {
