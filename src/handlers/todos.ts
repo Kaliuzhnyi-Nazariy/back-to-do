@@ -9,11 +9,8 @@ async function getToDos(req: Request, res: Response<ToDo[]>) {
 
   if (!todos) throw Error("something went wrong");
 
-  // console.log(req.session);
-  // console.log(req.session.id);
   req.sessionStore.get(req.session.id, (err, sessionData) => {
     if (err) {
-      // console.log(err);
       throw err;
     }
     console.log("sessionData: ", sessionData);
@@ -35,15 +32,12 @@ async function createToDo(
   res: Response<ToDo>
 ) {
   const { title, description, status } = req.body;
-  // console.log(title, description, status);
   const newToDo = await ToDoSchema.create({
     title,
     description,
     status,
     ownerId: req.user?._id,
   });
-
-  // console.log(newToDo);
 
   res.status(201).json(newToDo);
 }
