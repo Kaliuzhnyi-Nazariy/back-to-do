@@ -14,23 +14,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const todo_1 = __importDefault(require("../schemas/todo"));
 const helpers_1 = __importDefault(require("../helpers"));
-function check(req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        console.log("check");
-        console.log("req.session: ", req.session);
-        console.log("req.user: ", req.user);
-        res.status(204).json();
-    });
-}
 function getToDos(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a;
-        console.log("todo");
         const todos = yield todo_1.default.find({ ownerId: (_a = req.user) === null || _a === void 0 ? void 0 : _a._id });
         if (!todos)
             throw Error("something went wrong");
-        // console.log(req.session);
-        // console.log(req.session.id);
         req.sessionStore.get(req.session.id, (err, sessionData) => {
             if (err) {
                 throw err;
@@ -52,14 +41,12 @@ function createToDo(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a;
         const { title, description, status } = req.body;
-        // console.log(title, description, status);
         const newToDo = yield todo_1.default.create({
             title,
             description,
             status,
             ownerId: (_a = req.user) === null || _a === void 0 ? void 0 : _a._id,
         });
-        // console.log(newToDo);
         res.status(201).json(newToDo);
     });
 }
@@ -93,7 +80,6 @@ function deleteToDo(req, res) {
     });
 }
 exports.default = {
-    check: helpers_1.default.ctrlWrapper(check),
     getToDos: helpers_1.default.ctrlWrapper(getToDos),
     createToDo: helpers_1.default.ctrlWrapper(createToDo),
     updateToDo: helpers_1.default.ctrlWrapper(updateToDo),
