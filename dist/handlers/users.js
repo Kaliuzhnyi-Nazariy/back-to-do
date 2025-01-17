@@ -16,8 +16,12 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_1 = __importDefault(require("../schemas/user"));
 const ErrorHandler_1 = require("../helpers/ErrorHandler");
 const ctrlWrapper_1 = __importDefault(require("../helpers/ctrlWrapper"));
+const discord_user_1 = __importDefault(require("../schemas/discord-user"));
 function getUser(req, res) {
-    res.send([]);
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log(req.user);
+        res.status(200).json();
+    });
 }
 function createUser(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -47,12 +51,71 @@ function createUser(req, res, next) {
         res.status(201).json(result);
     });
 }
+function discordUser(req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // console.log("req.session: ", req.session);
+        // console.log("user: ", req.user);
+        var _a, _b;
+        console.log("discord user");
+        if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id))
+            throw (0, ErrorHandler_1.errorHandler)(401, "HERE");
+        // let userData;
+        let userData = yield discord_user_1.default.findOne({
+            discordId: (_b = req.user) === null || _b === void 0 ? void 0 : _b.id,
+        });
+        try {
+            // userData: DiscordUserInt | null = await DiscordUser.findOne({ discordId: req.user?.id });
+        }
+        catch (error) {
+            console.log(error);
+            throw (0, ErrorHandler_1.errorHandler)(404, error.message);
+        }
+        req.session.userDiscord = userData;
+        res.redirect("/api/users/discord/check");
+        return;
+        // const { email, username, password, confirmPassword } = req.body;
+        // const user = await User.findOne({ email });
+        // if (user) {
+        //   next(errorHandler(409, "This email already in use!"));
+        // }
+        // const userName = await User.findOne({ username });
+        // if (userName) {
+        //   next(errorHandler(409, "This username already in use!"));
+        // }
+        // if (password !== confirmPassword) {
+        //   next(errorHandler(400, "Passwords are not match!"));
+        // }
+        // const hashedPassword = await bcrypt.hash(password, 10);
+        // const newUser = await User.create({
+        //   email,
+        //   username,
+        //   password: hashedPassword,
+        // });
+        // if (!newUser) throw errorHandler(500);
+        // const result: UserType | null = await User.findById(newUser._id).select(
+        //   "-__v -password"
+        // );
+        // if (!result) throw errorHandler(500);
+        // res.status(201).json(result);
+    });
+}
+function discordUserCheck(req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log(req.user);
+        console.log(req.session);
+    });
+}
+// async function linkedinUser(req: Request, res: Response, next: NextFunction) {
+//   console.log(req.session);
+//   console.log(req.user);
+//   res.status(200).json();
+// }
 function loginUser(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         const { email, username, password } = req.body;
         let user = null;
         if (email) {
-            console.log(email);
+            // console.log(email);
             user = yield user_1.default.findOne({ email }, "-__v");
         }
         else if (username) {
@@ -89,8 +152,16 @@ function updateUser(req, res, next) {
         });
     });
 }
-function logoutUser() {
-    return __awaiter(this, void 0, void 0, function* () { });
+function logoutUser(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!req.user)
+            throw (0, ErrorHandler_1.errorHandler)(401);
+        req.logout((err) => {
+            if (err)
+                throw (0, ErrorHandler_1.errorHandler)(400);
+            res.status(204).json();
+        });
+    });
 }
 function deleteUser(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -103,7 +174,11 @@ function deleteUser(req, res, next) {
     });
 }
 exports.default = {
+    getUser: (0, ctrlWrapper_1.default)(getUser),
     register: (0, ctrlWrapper_1.default)(createUser),
+    discord: (0, ctrlWrapper_1.default)(discordUser),
+    dsCheck: (0, ctrlWrapper_1.default)(discordUserCheck),
+    // linkedin: ctrlWrapper(linkedinUser),
     login: (0, ctrlWrapper_1.default)(loginUser),
     update: (0, ctrlWrapper_1.default)(updateUser),
     logout: (0, ctrlWrapper_1.default)(logoutUser),

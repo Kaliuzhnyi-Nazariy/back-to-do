@@ -7,10 +7,13 @@ import User from "../schemas/user";
 import { errorHandler } from "../helpers/ErrorHandler";
 import { IUser, UserSchema } from "../schemas/types/user.schema";
 import ctrlWrapper from "../helpers/ctrlWrapper";
+import DiscordUser from "../schemas/discord-user";
+import { DiscordUserInt } from "../schemas/types/discordUser.schema";
 
-// function getUser(req: Request, res: Response) {
-//   res.send([]);
-// }
+async function getUser(req: Request, res: Response) {
+  console.log(req.user);
+  res.status(200).json();
+}
 
 async function createUser(
   req: Request<{}, {}, CreateUserDto>,
@@ -53,6 +56,73 @@ async function createUser(
 
   res.status(201).json(result);
 }
+
+async function discordUser(req: Request, res: Response, next: NextFunction) {
+  // console.log("req.session: ", req.session);
+  // console.log("user: ", req.user);
+
+  console.log("discord user");
+
+  if (!req.user?.id) throw errorHandler(401, "HERE");
+
+  // let userData;
+
+  let userData: DiscordUserInt | null = await DiscordUser.findOne({
+    discordId: req.user?.id,
+  });
+
+  try {
+    // userData: DiscordUserInt | null = await DiscordUser.findOne({ discordId: req.user?.id });
+  } catch (error: any) {
+    console.log(error);
+    throw errorHandler(404, error.message);
+  }
+
+  req.session.userDiscord = userData;
+
+  res.redirect("/api/users/discord/check");
+  return;
+  // const { email, username, password, confirmPassword } = req.body;
+  // const user = await User.findOne({ email });
+  // if (user) {
+  //   next(errorHandler(409, "This email already in use!"));
+  // }
+  // const userName = await User.findOne({ username });
+  // if (userName) {
+  //   next(errorHandler(409, "This username already in use!"));
+  // }
+  // if (password !== confirmPassword) {
+  //   next(errorHandler(400, "Passwords are not match!"));
+  // }
+  // const hashedPassword = await bcrypt.hash(password, 10);
+  // const newUser = await User.create({
+  //   email,
+  //   username,
+  //   password: hashedPassword,
+  // });
+  // if (!newUser) throw errorHandler(500);
+  // const result: UserType | null = await User.findById(newUser._id).select(
+  //   "-__v -password"
+  // );
+  // if (!result) throw errorHandler(500);
+  // res.status(201).json(result);
+}
+
+async function discordUserCheck(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  console.log(req.user);
+  console.log(req.session);
+}
+
+// async function linkedinUser(req: Request, res: Response, next: NextFunction) {
+//   console.log(req.session);
+//   console.log(req.user);
+
+//   res.status(200).json();
+// }
 
 async function loginUser(
   req: Request<{}, {}, LoginUserDto>,
@@ -140,7 +210,11 @@ async function deleteUser(
 }
 
 export default {
+  getUser: ctrlWrapper(getUser),
   register: ctrlWrapper(createUser),
+  discord: ctrlWrapper(discordUser),
+  dsCheck: ctrlWrapper(discordUserCheck),
+  // linkedin: ctrlWrapper(linkedinUser),
   login: ctrlWrapper(loginUser),
   update: ctrlWrapper(updateUser),
   logout: ctrlWrapper(logoutUser),

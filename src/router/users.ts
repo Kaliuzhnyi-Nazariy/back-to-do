@@ -4,23 +4,15 @@ import validate from "../middlewares/validate";
 import userRegisterValidation from "../schemas/validation/user/userRegisterValidation";
 import userLoginValidation from "../schemas/validation/user/userLoginValidation";
 import userUpdateValidation from "../schemas/validation/user/userUpdateValidation";
-import passport, { authenticate } from "passport";
+import passport from "passport";
 
 import "../strategies/local-strategy";
+
 import { authenticated } from "../helpers/authenticated";
 
 const router = Router();
 
-// router.get("/", userCtrl.getUser);
-
-// router.get("/:id", getUserById);
-
-router.post(
-  "/",
-  passport.authenticate("local"),
-  validate(userRegisterValidation),
-  userCtrl.register
-);
+router.post("/", validate(userRegisterValidation), userCtrl.register);
 
 router.post(
   "/login",
