@@ -1,2 +1,6 @@
 node_modules/
 .env
+cookie.ts
+discord-strategy.ts
+discord-user.ts
+discordUser.schema.ts
