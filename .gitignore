@@ -4,3 +4,8 @@ cookie.ts
 discord-strategy.ts
 discord-user.ts
 discordUser.schema.ts
+cookie.js
+discord-strategy.js
+discord-user.js
+discordUser.schema.js
+dist/strategies/linkedin-strategy.js
